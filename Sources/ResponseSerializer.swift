@@ -43,8 +43,6 @@ public struct ResponseSerializer: S4.ResponseSerializer {
 
         try send(newLine)
 
-        try send(newLine)
-
         switch response.body {
         case .buffer(let data):
             try send(data)
