@@ -46,9 +46,9 @@ public struct ResponseSerializer: S4.ResponseSerializer {
         try send(newLine)
 
         switch response.body {
-        case .BufferBody(let data):
+        case .buffer(let data):
             try send(data)
-        case .StreamBody(let bodyStream):
+        case .stream(let bodyStream):
             while !bodyStream.closed {
                 let data = try bodyStream.receive()
                 try send(String(data.count, radix: 16).data)
