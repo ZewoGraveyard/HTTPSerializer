@@ -43,21 +43,21 @@ public struct RequestSerializer: S4.RequestSerializer {
 
         try send(newLine)
 
-        for data in StreamSequence(request.body) {
+        switch request.body {
+        case .BufferBody(let data):
             try send(data)
+        case .StreamBody(let bodyStream):
+            while !bodyStream.closed {
+                let data = try bodyStream.receive()
+                try send(String(data.count, radix: 16).data)
+                try send(newLine)
+                try send(data)
+                try send(newLine)
+            }
+
+            try send("0".data)
+            try send(newLine)
+            try send(newLine)
         }
-//        if it's chunk encoding
-//            while !bodyStream.closed {
-//                let data = try bodyStream.receive()
-//                try send(String(data.count, radix: 16).data)
-//                try send(newLine)
-//                try send(data)
-//                try send(newLine)
-//            }
-//
-//            try send("0".data)
-//            try send(newLine)
-//            try send(newLine)
-//        }
     }
 }
