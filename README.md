@@ -6,17 +6,28 @@ HTTPSerializer
 [![License][mit-badge]][mit-url]
 [![Slack][slack-badge]][slack-url]
 
-## Documentation
-
-### RequestSerializer
+## Usage
 
 ```swift
+let serializer = RequestSerializer()
 
-var requestString = ""
-try RequestSerializer().serialize(request) { data in
-  requestString += try String(data: data)
+try serializer.serialize(request) { data in
+  try stream.send(data)
 }
 
+try stream.flush()
+```
+
+`ResponseSerializer` works the same way
+
+```swift
+let serializer = ResponseSerializer()
+
+try serializer.serialize(response) { data in
+  try stream.send(data)
+}
+
+try stream.flush()
 ```
 
 ## Community
