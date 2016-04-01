@@ -30,6 +30,20 @@ try serializer.serialize(response) { data in
 try stream.flush()
 ```
 
+## Installation
+
+- Add `HTTPSerializer` to your `Package.swift`
+
+```swift
+import PackageDescription
+
+let package = Package(
+	dependencies: [
+		.Package(url: "https://github.com/Zewo/HTTPSerializer.git", majorVersion: 0, minor: 4)
+	]
+)
+```
+
 ## Community
 
 [![Slack](http://s13.postimg.org/ybwy92ktf/Slack.png)](http://slack.zewo.io)
