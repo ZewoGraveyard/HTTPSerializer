@@ -23,42 +23,49 @@
 // SOFTWARE.
 
 @_exported import S4
-@_exported import Data
 
 public struct RequestSerializer: S4.RequestSerializer {
     public init() {}
 
-    public func serialize(request: Request, to stream: Stream) throws {
+    public func serialize(request: Request, to transport: Stream) throws {
         let newLine: Data = [13, 10]
 
-        try stream.send("\(request.method) \(request.uri) HTTP/\(request.version.major).\(request.version.minor)".data)
-        try stream.send(newLine)
+        try transport.send("\(request.method) \(request.uri) HTTP/\(request.version.major).\(request.version.minor)".data)
+        try transport.send(newLine)
 
         for (name, values) in request.headers.headers {
             for value in values.values {
-                try stream.send("\(name): \(value)".data)
-                try stream.send(newLine)
+                try transport.send("\(name): \(value)".data)
+                try transport.send(newLine)
             }
         }
 
-        try stream.send(newLine)
+        try transport.send(newLine)
 
         switch request.body {
         case .buffer(let data):
-            try stream.send(data)
-        case .receiver(let bodyStream):
-            for data in StreamSequence(for: bodyStream) {
-                try stream.send(String(data.count, radix: 16).data)
-                try stream.send(newLine)
-                try stream.send(data)
-                try stream.send(newLine)
+            try transport.send(data)
+        case .receiver(let receiver):
+            while !receiver.closed {
+                let data = try receiver.receive(upTo: 2014)
+                try transport.send(String(data.count, radix: 16).data)
+                try transport.send(newLine)
+                try transport.send(data)
+                try transport.send(newLine)
             }
 
-            try stream.send("0".data)
-            try stream.send(newLine)
-            try stream.send(newLine)
-        default:
-            break
+            try transport.send("0".data)
+            try transport.send(newLine)
+            try transport.send(newLine)
+        case .sender(let sender):
+            let body = BodyStream(transport)
+            try sender(body)
+
+            try transport.send("0".data)
+            try transport.send(newLine)
+            try transport.send(newLine)
         }
+
+        try transport.flush()
     }
 }

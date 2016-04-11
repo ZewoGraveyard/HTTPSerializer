@@ -1,4 +1,4 @@
-// Package.swift
+// BodyStream.swift
 //
 // The MIT License (MIT)
 //
@@ -22,11 +22,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import PackageDescription
+final class BodyStream: Stream {
+    var closed = false
+    let transport: Stream
 
-let package = Package(
-	name: "HTTPSerializer",
-	dependencies: [
-        .Package(url: "https://github.com/open-swift/S4.git", majorVersion: 0, minor: 3),
-    ]
-)
+    init(_ transport: Stream) {
+        self.transport = transport
+    }
+
+    func close() -> Bool {
+        if closed {
+            return false
+        }
+        closed = true
+        return true
+    }
+
+    func receive(upTo byteCount: Int, timingOut deadline: Double = .never) throws -> Data {
+        enum Error: ErrorProtocol {
+            case unsupported
+        }
+        throw Error.unsupported
+    }
+
+    func send(data: Data, timingOut deadline: Double = .never) throws {
+        if closed {
+            enum Error: ErrorProtocol {
+                case closedStream
+            }
+            throw Error.closedStream
+        }
+        let newLine: Data = [13, 10]
+        try transport.send(String(data.count, radix: 16).data)
+        try transport.send(newLine)
+        try transport.send(data)
+        try transport.send(newLine)
+    }
+
+    func flush(timingOut deadline: Double = .never) throws {
+        try transport.flush()
+    }
+}
