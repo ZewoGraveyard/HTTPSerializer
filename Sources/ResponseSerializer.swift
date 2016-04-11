@@ -28,36 +28,37 @@
 public struct ResponseSerializer: S4.ResponseSerializer {
     public init() {}
 
-    public func serialize(response: Response, @noescape send: Data throws -> Void) throws {
+    public func serialize(response: Response, to stream: Stream) throws {
         let newLine: Data = [13, 10]
 
-        try send("HTTP/\(response.version.major).\(response.version.minor) \(response.status.statusCode) \(response.status.reasonPhrase)".data)
-        try send(newLine)
+        try stream.send("HTTP/\(response.version.major).\(response.version.minor) \(response.status.statusCode) \(response.status.reasonPhrase)".data)
+        try stream.send(newLine)
 
         for (name, values) in response.headers.headers {
             for value in values.values {
-                try send("\(name): \(value)".data)
-                try send(newLine)
+                try stream.send("\(name): \(value)".data)
+                try stream.send(newLine)
             }
         }
 
-        try send(newLine)
+        try stream.send(newLine)
 
         switch response.body {
         case .buffer(let data):
-            try send(data)
-        case .stream(let bodyStream):
-            while !bodyStream.closed {
-                let data = try bodyStream.receive()
-                try send(String(data.count, radix: 16).data)
-                try send(newLine)
-                try send(data)
-                try send(newLine)
+            try stream.send(data)
+        case .receiver(let bodyStream):
+            for data in StreamSequence(for: bodyStream) {
+                try stream.send(String(data.count, radix: 16).data)
+                try stream.send(newLine)
+                try stream.send(data)
+                try stream.send(newLine)
             }
 
-            try send("0".data)
-            try send(newLine)
-            try send(newLine)
+            try stream.send("0".data)
+            try stream.send(newLine)
+            try stream.send(newLine)
+        default:
+            break
         }
     }
 }
