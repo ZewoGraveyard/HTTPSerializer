@@ -30,12 +30,8 @@ final class BodyStream: Stream {
         self.transport = transport
     }
 
-    func close() -> Bool {
-        if closed {
-            return false
-        }
+    func close() {
         closed = true
-        return true
     }
 
     func receive(upTo byteCount: Int, timingOut deadline: Double = .never) throws -> Data {
