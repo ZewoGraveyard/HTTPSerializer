@@ -27,7 +27,7 @@
 public struct ResponseSerializer: S4.ResponseSerializer {
     public init() {}
 
-    public func serialize(response: Response, to transport: Stream) throws {
+    public func serialize(_ response: Response, to transport: Stream) throws {
         let newLine: Data = [13, 10]
 
         try transport.send("HTTP/\(response.version.major).\(response.version.minor) \(response.status.statusCode) \(response.status.reasonPhrase)".data)

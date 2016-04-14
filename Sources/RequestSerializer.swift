@@ -27,7 +27,7 @@
 public struct RequestSerializer: S4.RequestSerializer {
     public init() {}
 
-    public func serialize(request: Request, to transport: Stream) throws {
+    public func serialize(_ request: Request, to transport: Stream) throws {
         let newLine: Data = [13, 10]
 
         try transport.send("\(request.method) \(request.uri) HTTP/\(request.version.major).\(request.version.minor)".data)

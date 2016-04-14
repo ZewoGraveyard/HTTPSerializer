@@ -45,7 +45,7 @@ final class BodyStream: Stream {
         throw Error.unsupported
     }
 
-    func send(data: Data, timingOut deadline: Double = .never) throws {
+    func send(_ data: Data, timingOut deadline: Double = .never) throws {
         if closed {
             enum Error: ErrorProtocol {
                 case closedStream
