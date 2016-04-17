@@ -43,8 +43,8 @@ public struct ResponseSerializer: S4.ResponseSerializer {
         try transport.send(newLine)
 
         switch response.body {
-        case .buffer(let data):
-            try transport.send(data)
+        case .buffer(let buffer):
+            try transport.send(buffer)
         case .receiver(let receiver):
             while !receiver.closed {
                 let data = try receiver.receive(upTo: 2014)
