@@ -30,27 +30,20 @@ final class BodyStream: Stream {
         self.transport = transport
     }
 
-    func close() -> Bool {
-        if closed {
-            return false
-        }
+    func close() {
         closed = true
-        return true
     }
 
     func receive(upTo byteCount: Int, timingOut deadline: Double = .never) throws -> Data {
         enum Error: ErrorProtocol {
-            case unsupported
+            case receiveUnsupported
         }
-        throw Error.unsupported
+        throw Error.receiveUnsupported
     }
 
-    func send(data: Data, timingOut deadline: Double = .never) throws {
+    func send(_ data: Data, timingOut deadline: Double = .never) throws {
         if closed {
-            enum Error: ErrorProtocol {
-                case closedStream
-            }
-            throw Error.closedStream
+            throw StreamError.closedStream(data: data)
         }
         let newLine: Data = [13, 10]
         try transport.send(String(data.count, radix: 16).data)

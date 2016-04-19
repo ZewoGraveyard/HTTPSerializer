@@ -27,7 +27,7 @@
 public struct RequestSerializer: S4.RequestSerializer {
     public init() {}
 
-    public func serialize(request: Request, to transport: Stream) throws {
+    public func serialize(_ request: Request, to transport: Stream) throws {
         let newLine: Data = [13, 10]
 
         try transport.send("\(request.method) \(request.uri) HTTP/\(request.version.major).\(request.version.minor)".data)
@@ -43,8 +43,8 @@ public struct RequestSerializer: S4.RequestSerializer {
         try transport.send(newLine)
 
         switch request.body {
-        case .buffer(let data):
-            try transport.send(data)
+        case .buffer(let buffer):
+            try transport.send(buffer)
         case .receiver(let receiver):
             while !receiver.closed {
                 let data = try receiver.receive(upTo: 2014)
