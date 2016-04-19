@@ -43,7 +43,7 @@ final class BodyStream: Stream {
 
     func send(_ data: Data, timingOut deadline: Double = .never) throws {
         if closed {
-            throw StreamError.closedStream(data: data)
+            throw StreamError.closedStream
         }
         let newLine: Data = [13, 10]
         try transport.send(String(data.count, radix: 16).data)
