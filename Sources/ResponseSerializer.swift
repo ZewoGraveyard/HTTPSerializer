@@ -33,11 +33,9 @@ public struct ResponseSerializer: S4.ResponseSerializer {
         try transport.send("HTTP/\(response.version.major).\(response.version.minor) \(response.status.statusCode) \(response.status.reasonPhrase)".data)
         try transport.send(newLine)
 
-        for (name, values) in response.headers.headers {
-            for value in values.values {
-                try transport.send("\(name): \(value)".data)
-                try transport.send(newLine)
-            }
+        for (name, value) in response.headers.headers {
+            try transport.send("\(name): \(value)".data)
+            try transport.send(newLine)
         }
 
         try transport.send(newLine)
