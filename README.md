@@ -6,6 +6,7 @@
 [![License][mit-badge]][mit-url]
 [![Slack][slack-badge]][slack-url]
 [![Travis][travis-badge]][travis-url]
+[![Codebeat][codebeat-badge]][codebeat-url]
 
 ## Usage
 
@@ -72,3 +73,5 @@ This project is released under the MIT license. See [LICENSE](LICENSE) for detai
 [slack-url]: http://slack.zewo.io
 [travis-badge]: https://travis-ci.org/Zewo/HTTPSerializer.svg?branch=master
 [travis-url]: https://travis-ci.org/Zewo/HTTPSerializer
+[codebeat-badge]: https://codebeat.co/badges/18676a68-305d-4292-9c35-f51a2807852d
+[codebeat-url]: https://codebeat.co/projects/github-com-zewo-httpserializer
