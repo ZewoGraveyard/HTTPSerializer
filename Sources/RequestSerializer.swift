@@ -23,6 +23,7 @@
 // SOFTWARE.
 
 @_exported import S4
+@_exported import URI
 
 public struct RequestSerializer: S4.RequestSerializer {
     public init() {}
@@ -30,7 +31,8 @@ public struct RequestSerializer: S4.RequestSerializer {
     public func serialize(_ request: Request, to transport: Stream) throws {
         let newLine: Data = [13, 10]
 
-        try transport.send("\(request.method) \(request.uri) HTTP/\(request.version.major).\(request.version.minor)".data)
+        let uri = try request.uri.percentEncoded()
+        try transport.send("\(request.method) \(uri) HTTP/\(request.version.major).\(request.version.minor)".data)
         try transport.send(newLine)
 
         for (name, values) in request.headers.headers {
