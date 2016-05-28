@@ -64,6 +64,8 @@ public struct ResponseSerializer: S4.ResponseSerializer {
             try transport.send("0".data)
             try transport.send(newLine)
             try transport.send(newLine)
+        default:
+            throw BodyError.inconvertibleType
         }
 
         try transport.flush()
