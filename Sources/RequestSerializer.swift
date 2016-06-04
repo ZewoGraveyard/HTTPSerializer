@@ -34,11 +34,9 @@ public struct RequestSerializer: S4.RequestSerializer {
         try transport.send("\(request.method) \(request.uri.percentEncoded()) HTTP/\(request.version.major).\(request.version.minor)".data, timingOut: .never)
         try transport.send(newLine)
 
-        for (name, values) in request.headers.headers {
-            for value in values.values {
-                try transport.send("\(name): \(value)".data)
-                try transport.send(newLine)
-            }
+        for (name, value) in request.headers.headers {
+            try transport.send("\(name): \(value)".data)
+            try transport.send(newLine)
         }
 
         try transport.send(newLine)
@@ -65,6 +63,8 @@ public struct RequestSerializer: S4.RequestSerializer {
             try transport.send("0".data)
             try transport.send(newLine)
             try transport.send(newLine)
+        default:
+            throw BodyError.inconvertibleType
         }
 
         try transport.flush()
