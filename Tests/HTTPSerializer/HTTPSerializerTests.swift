@@ -8,7 +8,7 @@ class HTTPSerializerTests: XCTestCase {
 }
 
 extension HTTPSerializerTests {
-    static var allTests: [(String, HTTPSerializerTests -> () throws -> Void)] {
+    static var allTests: [(String, (HTTPSerializerTests) -> () throws -> Void)] {
         return [
            ("testReality", testReality),
         ]

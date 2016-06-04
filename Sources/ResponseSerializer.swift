@@ -33,11 +33,14 @@ public struct ResponseSerializer: S4.ResponseSerializer {
         try transport.send("HTTP/\(response.version.major).\(response.version.minor) \(response.status.statusCode) \(response.status.reasonPhrase)".data)
         try transport.send(newLine)
 
-        for (name, values) in response.headers.headers {
-            for value in values.values {
-                try transport.send("\(name): \(value)".data)
-                try transport.send(newLine)
-            }
+        for (name, value) in response.headers.headers {
+            try transport.send("\(name): \(value)".data)
+            try transport.send(newLine)
+        }
+
+        for cookie in response.cookies {
+            try transport.send("Set-Cookie: \(cookie)".data)
+            try transport.send(newLine)
         }
 
         try transport.send(newLine)
@@ -64,6 +67,8 @@ public struct ResponseSerializer: S4.ResponseSerializer {
             try transport.send("0".data)
             try transport.send(newLine)
             try transport.send(newLine)
+        default:
+            throw BodyError.inconvertibleType
         }
 
         try transport.flush()
