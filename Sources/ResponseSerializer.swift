@@ -25,9 +25,12 @@
 @_exported import S4
 
 public struct ResponseSerializer: S4.ResponseSerializer {
-    public init() {}
+    let transport: Stream
+    public init(stream: Stream) {
+        self.transport = stream
+    }
 
-    public func serialize(_ response: Response, to transport: Stream) throws {
+    public func serialize(_ response: Response) throws {
         let newLine: Data = [13, 10]
 
         try transport.send("HTTP/\(response.version.major).\(response.version.minor) \(response.status.statusCode) \(response.status.reasonPhrase)".data)
@@ -38,7 +41,7 @@ public struct ResponseSerializer: S4.ResponseSerializer {
             try transport.send(newLine)
         }
 
-        for cookie in response.cookies {
+        for cookie in response.cookieHeaders {
             try transport.send("Set-Cookie: \(cookie)".data)
             try transport.send(newLine)
         }

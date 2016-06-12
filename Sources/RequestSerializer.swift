@@ -26,9 +26,12 @@
 import URI
 
 public struct RequestSerializer: S4.RequestSerializer {
-    public init() {}
+    let transport: Stream
+    public init(stream: Stream) {
+        self.transport = stream
+    }
 
-    public func serialize(_ request: Request, to transport: Stream) throws {
+    public func serialize(_ request: Request) throws {
         let newLine: Data = [13, 10]
 
         try transport.send("\(request.method) \(request.uri.percentEncoded()) HTTP/\(request.version.major).\(request.version.minor)".data, timingOut: .never)
