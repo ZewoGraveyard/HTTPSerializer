@@ -51,6 +51,9 @@ public struct ResponseSerializer: S4.ResponseSerializer {
         case .receiver(let receiver):
             while !receiver.closed {
                 let data = try receiver.receive(upTo: 2014)
+                guard data.count > 0 else {
+                    break
+                }
                 try transport.send(String(data.count, radix: 16).data)
                 try transport.send(newLine)
                 try transport.send(data)
